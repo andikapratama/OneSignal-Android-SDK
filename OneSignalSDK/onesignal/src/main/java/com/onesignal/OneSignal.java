@@ -1145,26 +1145,52 @@ public class OneSignal {
    static void onAppFocus() {
       foreground = true;
 
-      LocationGMS.onFocusChange();
+      Thread thread = new Thread(new Runnable() {
+          @Override
+          public void run() {
+              LocationGMS.onFocusChange();
 
-      lastTrackedFocusTime = SystemClock.elapsedRealtime();
+              lastTrackedFocusTime = SystemClock.elapsedRealtime();
 
-      sendAsSession = isPastOnSessionTime();
-      setLastSessionTime(System.currentTimeMillis());
+              sendAsSession = isPastOnSessionTime();
+              setLastSessionTime(System.currentTimeMillis());
 
-      startRegistrationOrOnSession();
+              startRegistrationOrOnSession();
 
-      if (trackGooglePurchase != null)
-         trackGooglePurchase.trackIAP();
+              if (trackGooglePurchase != null)
+                  trackGooglePurchase.trackIAP();
 
-      NotificationRestorer.asyncRestore(appContext);
-      
-      getCurrentPermissionState(appContext).refreshAsTo();
+              NotificationRestorer.asyncRestore(appContext);
 
-      if (trackFirebaseAnalytics != null && getFirebaseAnalyticsEnabled(appContext))
-         trackFirebaseAnalytics.trackInfluenceOpenEvent();
+              getCurrentPermissionState(appContext).refreshAsTo();
 
-      OneSignalSyncServiceUtils.cancelSyncTask(appContext);
+              if (trackFirebaseAnalytics != null && getFirebaseAnalyticsEnabled(appContext))
+                  trackFirebaseAnalytics.trackInfluenceOpenEvent();
+
+              OneSignalSyncServiceUtils.cancelSyncTask(appContext);
+          }
+      })
+
+//      LocationGMS.onFocusChange();
+//
+//      lastTrackedFocusTime = SystemClock.elapsedRealtime();
+//
+//      sendAsSession = isPastOnSessionTime();
+//      setLastSessionTime(System.currentTimeMillis());
+//
+//      startRegistrationOrOnSession();
+//
+//      if (trackGooglePurchase != null)
+//         trackGooglePurchase.trackIAP();
+//
+//      NotificationRestorer.asyncRestore(appContext);
+//
+//      getCurrentPermissionState(appContext).refreshAsTo();
+//
+//      if (trackFirebaseAnalytics != null && getFirebaseAnalyticsEnabled(appContext))
+//         trackFirebaseAnalytics.trackInfluenceOpenEvent();
+//
+//      OneSignalSyncServiceUtils.cancelSyncTask(appContext);
    }
 
    static boolean isForeground() {
@@ -1736,12 +1762,18 @@ public class OneSignal {
          @Override
          public void run() {
             if (getUserId() != null)
-               OSUtils.runOnMainUIThread(new Runnable() {
-                  @Override
-                  public void run() {
-                     internalFireIdsAvailableCallback();
-                  }
+               Thread thread = new Thread(new Runnable() {
+                   @Override
+                   public void run() {
+                       internalFireIdsAvailableCallback();
+                   }
                });
+//               OSUtils.runOnMainUIThread(new Runnable() {
+//                  @Override
+//                  public void run() {
+//                     internalFireIdsAvailableCallback();
+//                  }
+//               });
          }
       };
 
