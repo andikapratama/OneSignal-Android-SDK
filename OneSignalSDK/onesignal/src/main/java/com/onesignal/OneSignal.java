@@ -1169,7 +1169,7 @@ public class OneSignal {
 
               OneSignalSyncServiceUtils.cancelSyncTask(appContext);
           }
-      })
+      });
 
 //      LocationGMS.onFocusChange();
 //
@@ -1762,7 +1762,7 @@ public class OneSignal {
          @Override
          public void run() {
             if (getUserId() != null)
-               Thread thread = new Thread(new Runnable() {
+               new Thread(new Runnable() {
                    @Override
                    public void run() {
                        internalFireIdsAvailableCallback();
